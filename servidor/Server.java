@@ -6,6 +6,7 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+import java.util.Arrays;
 
 // Generated code
 import generado.*;
@@ -13,38 +14,44 @@ import generado.*;
 import java.util.HashMap;
 
 public class Server {
-
   public static KvDB_Handler handler;
-
   public static KeyValueDB.Processor processor;
 
-  public static void main(String [] args) {
-    try {
-      handler = new KvDB_Handler();
-      processor = new KeyValueDB.Processor(handler);
+  public static void main(String[] args) {
+    int port;
 
-      Runnable simple = new Runnable() {
-        public void run() {
-          simple(processor);
-        }
-      };      
+    if(args.length == 1){
+      try {
+        port = Integer.parseInt(args[0]);
+        handler = new KvDB_Handler();
+        processor = new KeyValueDB.Processor(handler);
 
-      new Thread(simple).start();
+        Runnable simple = new Runnable() {
+          public void run() {
+            simple(processor, port);
+          }
+        };      
 
-    } catch (Exception x) {
-      x.printStackTrace();
+        new Thread(simple).start();
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    else{
+      System.out.println("\nDebe ingresar el puerto como argumento.\nTerminando programa...\n");
     }
   }
 
-  public static void simple(KeyValueDB.Processor processor) {
+  public static void simple(KeyValueDB.Processor processor, int port) {
     try {
-      TServerTransport serverTransport = new TServerSocket(9090);
+      TServerTransport serverTransport = new TServerSocket(port);
       TServer server = new TSimpleServer(new Args(serverTransport).processor(processor));
 
       // Use this for a multithreaded server
       // TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
-      System.out.println("\nServidor iniciado...\n");
+      System.out.println("\nServidor iniciado en el puerto "+port+"...\n");
       server.serve();
     } catch (Exception e) {
       e.printStackTrace();

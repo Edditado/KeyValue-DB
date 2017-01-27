@@ -3,6 +3,6 @@ namespace c_glib generado
 
 service KeyValueDB {
 
-    void ping(),
+    string ping(),
 
 }

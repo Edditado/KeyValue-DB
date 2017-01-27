@@ -12,8 +12,9 @@ public class KvDB_Handler implements KeyValueDB.Iface {
     log = new HashMap<Integer, Integer>();
   }*/
 
-  public void ping() {
-    System.out.println("Holi :v");
+  public String ping() {
+  	return ("Holi :v");
+    //System.out.println("Holi :v");
   }
 
 }
