@@ -8,7 +8,7 @@ import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
 
@@ -48,21 +48,94 @@ public class Client {
     boolean exit = false;
 
     while(!exit){
-      System.out.print("kvDB> ");
+      System.out.print("\nkvDB> ");
       entradaTeclado = entradaEscaner.nextLine();
 
-      switch(entradaTeclado){
-        case "ping":
-          System.out.println( client.ping() );
-          break;
+      String[] parts = entradaTeclado.split(" +",2);
+      String command = parts[0].toLowerCase();
 
-        case "exit":
-          exit = true;
-          break;
+      //System.out.println( Arrays.toString(parts) );
+      if (!entradaTeclado.trim().isEmpty()) {
+        switch(command){
+          case "get":
+            if( parts.length > 1)
+              if( parts[1].length() > 0 ){
+                String[] parts1 = parts[1].split(" +");
 
-        default:
-          System.out.println("Comando incorrecto.");
-          break;
+                if( parts1.length == 1 )
+                  System.out.println( client.kvGet( parts1[0] ) );
+                else
+                  System.out.println("Debe ingresar la clave y el valor como argumentos.");
+              }
+              else
+                System.out.println("Debe ingresar la clave como argumento.");
+            else
+              System.out.println("Debe ingresar la clave como argumento.");
+
+            break;
+
+          case "set":
+            if( parts.length > 1)
+              if( parts[1].length() > 0 ){
+                String[] parts1 = parts[1].split(" +",2);
+
+                if( parts1.length > 1)
+                  if( parts1[1].length() > 0 )
+                    System.out.println( client.kvSet( parts1[0], parts1[1] ) );
+                  else
+                    System.out.println("Debe ingresar la clave y el valor como argumentos.");
+                else
+                  System.out.println("Debe ingresar la clave y el valor como argumentos.");
+              }
+              else
+                System.out.println("Debe ingresar la clave y el valor como argumentos.");
+            else
+              System.out.println("Debe ingresar la clave como argumento.");
+
+            break;
+
+          case "del":
+            if( parts.length > 1)
+              if( parts[1].length() > 0 ){
+                String[] parts1 = parts[1].split(" +");
+
+                if( parts1.length == 1 )
+                  client.kvDel( parts1[0] );
+                else
+                  System.out.println("Debe ingresar la clave y el valor como argumentos.");
+              }
+              else
+                System.out.println("Debe ingresar la clave como argumento.");
+            else
+              System.out.println("Debe ingresar la clave como argumento.");
+
+            break;
+
+          case "list":
+            if( parts.length == 1 || parts[1].length() == 0){
+              List<String> lista = client.kvList();
+
+              for(String key : lista ){
+                System.out.println("- "+key);
+              }
+            }
+            else
+              System.out.println("Argumentos no son requeridos.");
+            
+            break;
+
+          case "exit":
+            if( parts.length == 1 || parts[1].length() == 0)
+              exit = true;
+            else
+              System.out.println("Argumentos no son requeridos.");
+            
+            break;
+
+          default:
+            System.out.println("Comando incorrecto.");
+            break;
+        }
       }
     }
     

@@ -46,10 +46,7 @@ public class Server {
   public static void simple(KeyValueDB.Processor processor, int port) {
     try {
       TServerTransport serverTransport = new TServerSocket(port);
-      TServer server = new TSimpleServer(new Args(serverTransport).processor(processor));
-
-      // Use this for a multithreaded server
-      // TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
+      TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
       System.out.println("\nServidor iniciado en el puerto "+port+"...\n");
       server.serve();
