@@ -50,45 +50,32 @@ public class Client {
     while(!exit){
       System.out.print("\nkvDB> ");
       entradaTeclado = entradaEscaner.nextLine();
+      entradaTeclado = entradaTeclado.trim();
 
       String[] parts = entradaTeclado.split(" +",2);
       String command = parts[0].toLowerCase();
 
       //System.out.println( Arrays.toString(parts) );
-      if (!entradaTeclado.trim().isEmpty()) {
+      if (!entradaTeclado.isEmpty()) {
         switch(command){
           case "get":
             if( parts.length > 1)
-              if( parts[1].length() > 0 ){
-                String[] parts1 = parts[1].split(" +");
-
-                if( parts1.length == 1 )
-                  System.out.println( client.kvGet( parts1[0] ) );
-                else
-                  System.out.println("Debe ingresar la clave y el valor como argumentos.");
-              }
-              else
-                System.out.println("Debe ingresar la clave como argumento.");
+              System.out.println( client.kvGet( parts[1] ) );
             else
               System.out.println("Debe ingresar la clave como argumento.");
 
             break;
 
           case "set":
-            if( parts.length > 1)
-              if( parts[1].length() > 0 ){
-                String[] parts1 = parts[1].split(" +",2);
+            if( parts.length > 1){
+                String parts_trim = parts[1].trim();
+                String[] parts1 = parts_trim.split(" +",2);
 
                 if( parts1.length > 1)
-                  if( parts1[1].length() > 0 )
-                    System.out.println( client.kvSet( parts1[0], parts1[1] ) );
-                  else
-                    System.out.println("Debe ingresar la clave y el valor como argumentos.");
+                  System.out.println( client.kvSet( parts1[0], parts1[1] ) );
                 else
                   System.out.println("Debe ingresar la clave y el valor como argumentos.");
-              }
-              else
-                System.out.println("Debe ingresar la clave y el valor como argumentos.");
+            } 
             else
               System.out.println("Debe ingresar la clave como argumento.");
 
@@ -96,23 +83,14 @@ public class Client {
 
           case "del":
             if( parts.length > 1)
-              if( parts[1].length() > 0 ){
-                String[] parts1 = parts[1].split(" +");
-
-                if( parts1.length == 1 )
-                  client.kvDel( parts1[0] );
-                else
-                  System.out.println("Debe ingresar la clave y el valor como argumentos.");
-              }
-              else
-                System.out.println("Debe ingresar la clave como argumento.");
+              client.kvDel( parts[1] );
             else
               System.out.println("Debe ingresar la clave como argumento.");
 
             break;
 
           case "list":
-            if( parts.length == 1 || parts[1].length() == 0){
+            if( parts.length == 1 ){
               List<String> lista = client.kvList();
 
               for(String key : lista ){
@@ -125,8 +103,23 @@ public class Client {
             break;
 
           case "exit":
-            if( parts.length == 1 || parts[1].length() == 0)
+            if( parts.length == 1 )
               exit = true;
+            else
+              System.out.println("Argumentos no son requeridos.");
+            
+            break;
+
+          case "help":
+            if( parts.length == 1 ){
+              System.out.println("Listado de comandos permitidos:\n");
+              System.out.println("set [arg1] [arg2]       Crea/modifica claves con su respectivo valor.\n\t\t\tLos argumentos [arg1] y [arg2], representan clave y\n\t\t\tvalor,respectivamente.\n");
+              System.out.println("get [arg1]              Obtiene el valor asociado a una clave.\n\t\t\tEl argumento [arg1] representa la clave.\n");
+              System.out.println("del [arg1]              Elimina la clave y el valor asociado a dicha clave.\n\t\t\tEl argumento [arg1] representa la clave.\n");
+              System.out.println("list                    Lista todas las claves almacenadas en memoria.\n");
+              System.out.println("help                    Provee información sobre los comandos de kvDB.");
+              System.out.println("exit                    Termina la conexión entre el cliente y el servidor.");
+            }
             else
               System.out.println("Argumentos no son requeridos.");
             
