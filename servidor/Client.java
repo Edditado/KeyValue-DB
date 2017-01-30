@@ -47,6 +47,7 @@ public class Client {
     Scanner entradaEscaner = new Scanner (System.in);
     boolean exit = false;
 
+
     while(!exit){
       System.out.print("\nkvDB> ");
       entradaTeclado = entradaEscaner.nextLine();
@@ -71,8 +72,17 @@ public class Client {
                 String parts_trim = parts[1].trim();
                 String[] parts1 = parts_trim.split(" +",2);
 
-                if( parts1.length > 1)
-                  System.out.println( client.kvSet( parts1[0], parts1[1] ) );
+                if( parts1.length > 1){
+
+                  String parts10 = parts1[0];
+                  String parts11 = parts1[1];
+
+                  if(parts10.getBytes().length <= 128000000 && parts11.getBytes().length <= 2000000000)
+                     System.out.println( client.kvSet( parts10, parts11 ) );
+                  
+                  else
+                    System.out.println("Error: La CLAVE no debe ser mayor 128 MB, ni el VALOR asociado mayor a 2 GB.");  
+                }
                 else
                   System.out.println("Debe ingresar la clave y el valor como argumentos.");
             } 
